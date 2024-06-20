@@ -8,3 +8,4 @@ scikit-learn
 spacy 
 wordcloud 
 pyLDAvis
+gensim scipy
