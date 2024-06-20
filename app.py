@@ -1,124 +1,122 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
+import re
 import nltk
-from nltk.tokenize import sent_tokenize
 from nltk.corpus import stopwords
-from nltk.cluster.util import cosine_distance
-import networkx as nx
-import matplotlib.pyplot as plt
-from PIL import Image
+from nltk.stem import PorterStemmer
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+import seaborn as sns
+import spacy
+from spacy import displacy
+import gensim
+import pyLDAvis.gensim as gensimvis
 
-# Mengunduh stopwords NLTK jika belum diunduh
-try:
-    nltk.data.find('corpora/stopwords.zip')
-except:
-    nltk.download('stopwords')
+# Function to clean text
+def clean_text(text):
+    # Remove HTML tags
+    text = re.sub('<.*?>', '', text)
+    # Remove non-alphabetic characters and convert to lowercase
+    text = re.sub('[^a-zA-Z]', ' ', text).lower()
+    # Remove URLs, mentions, and hashtags from the text
+    text = re.sub(r'http\S+', '', text)
+    text = re.sub(r'@\S+', '', text)
+    text = re.sub(r'#\S+', '', text)
+    # Tokenize the text
+    words = nltk.word_tokenize(text)
+    # Remove stopwords
+    stop_words = set(stopwords.words('indonesian'))
+    words = [w for w in words if w not in stop_words]
+    # Stemming
+    stemmer = PorterStemmer()
+    words = [stemmer.stem(w) for w in words]
+    # Join the words back into a string
+    text = ' '.join(words)
+    return text
 
-# Menggunakan stopwords bahasa Indonesia
-try:
-    stop_words = stopwords.words('indonesian')
-except:
-    nltk.download('stopwords')
-    stop_words = stopwords.words('indonesian')
+# Load the dataset
+@st.cache
+def load_data():
+    df = pd.read_csv(DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
+    return df
 
-# Fungsi untuk membaca teks artikel berdasarkan ID artikel
-def baca_teks_artikel(teks_artikel):
-    artikel = teks_artikel.split(". ")
-    kalimat = []
-    for kal in artikel:
-        kalimat.append(kal.replace("[^a-zA-Z]", " ").split(" "))
-    kalimat.pop()
-    return kalimat
-
-# Fungsi untuk membuat matriks kemiripan antar kalimat
-def buat_matriks_kemiripan(kalimat, stop_words):
-    matriks_kemiripan = np.zeros((len(kalimat), len(kalimat)))
-    for indeks1 in range(len(kalimat)):
-        for indeks2 in range(len(kalimat)):
-            if indeks1 == indeks2:
-                continue
-            matriks_kemiripan[indeks1][indeks2] = kemiripan_kalimat(kalimat[indeks1], kalimat[indeks2], stop_words)
-    return matriks_kemiripan
-
-# Fungsi untuk menghitung kemiripan antar kalimat
-def kemiripan_kalimat(kal1, kal2, stopwords=None):
-    if stopwords is None:
-        stopwords = []
-    kal1 = [w.lower() for w in kal1]
-    kal2 = [w.lower() for w in kal2]
-    semua_kata = list(set(kal1 + kal2))
-    vektor1 = [0] * len(semua_kata)
-    vektor2 = [0] * len(semua_kata)
-    for w in kal1:
-        if w in stopwords:
-            continue
-        vektor1[semua_kata.index(w)] += 1
-    for w in kal2:
-        if w in stopwords:
-            continue
-        vektor2[semua_kata.index(w)] += 1
-    return 1 - cosine_distance(vektor1, vektor2)
-
-# Fungsi untuk menghasilkan word cloud dari teks ringkasan
-def buat_word_cloud(teks):
-    wordcloud = WordCloud(width=1600, height=800).generate(teks)
-    plt.figure(figsize=(16, 8), facecolor='k')
-    plt.imshow(wordcloud)
-    plt.axis("off")
-    plt.savefig('wordcloud.png', facecolor='k', bbox_inches='tight')
-
-# Fungsi untuk meringkas teks artikel
-def ringkas_teks(teks_artikel, top_n=3):
-    teks_ringkasan = []
-    kalimat = baca_teks_artikel(teks_artikel)
-    matriks_kemiripan_kalimat = buat_matriks_kemiripan(kalimat, stop_words)
-    graph_kemiripan_kalimat = nx.from_numpy_array(matriks_kemiripan_kalimat)
-    skor = nx.pagerank(graph_kemiripan_kalimat)
-    kalimat_terurut = sorted(((skor[i], s) for i, s in enumerate(kalimat)), reverse=True)
-    for i in range(top_n):
-        teks_ringkasan.append(" ".join(kalimat_terurut[i][1]))
-    ringkasan = ". ".join(teks_ringkasan)
-    buat_word_cloud(ringkasan)
-    return ringkasan, graph_kemiripan_kalimat
-
-# Aplikasi Streamlit
-st.title("Perangkum dan Visualisasi Artikel Berita")
-
-# Memuat data dari CSV
-url = "https://gist.githubusercontent.com/khikisb/ce2f0cedd1605c056966bec0396f35ad/raw/3089ba335874a6818927dab3309727c68eedde98/berita.csv"
-df = pd.read_csv(url)
-
-# Tata letak Tab
-tab1, tab2 = st.tabs(["Data Berita", "Ringkasan Artikel Kustom"])
-
-with tab1:
-    st.header("Data Berita")
-
-    # Menampilkan tabel dengan pagination
-    per_page = 10
-    total_pages = len(df) // per_page + (1 if len(df) % per_page > 0 else 0)
-    page = st.number_input("Halaman", min_value=1, max_value=total_pages, step=1, value=1)
-    start_idx = (page - 1) * per_page
-    end_idx = min(start_idx + per_page, len(df))
-    st.write(df.iloc[start_idx:end_idx])
-
-with tab2:
-    st.header("Ringkas Artikel Kustom")
-    teks_artikel = st.text_area("Masukkan teks artikel untuk diringkas")
-    top_n = st.number_input("Masukkan jumlah kalimat untuk ringkasan", min_value=1, max_value=10, step=1, value=3)
-
-    if st.button("Ringkas"):
-        ringkasan, graph = ringkas_teks(teks_artikel, top_n)
-        st.subheader("Ringkasan")
-        st.write(ringkasan)
+# Main function to run the app
+def main():
+    st.title('Aplikasi Deteksi Cyberbullying di Komentar Instagram')
+    
+    # Load data
+    df = load_data()
+    
+    # Sidebar options
+    activity = st.sidebar.selectbox("Pilih aktivitas", ["Tampilkan Data", "Visualisasi", "Model Prediksi"])
+    
+    if activity == "Tampilkan Data":
+        st.subheader("Tampilkan Data")
+        st.write(df.head())
         
-        st.subheader("Grafik Kemiripan Kalimat")
-        plt.figure(figsize=(10, 7))
-        nx.draw(graph, with_labels=True, node_color='skyblue', node_size=1500, edge_color='gray', font_size=20, font_weight='bold')
-        st.pyplot(plt)
+    elif activity == "Visualisasi":
+        st.subheader("Visualisasi Data")
+        # Visualize class distribution
+        st.subheader('Distribusi Kelas dari Kategori CyberBullying')
+        fig = plt.figure()
+        sns.countplot(x='Kategori', data=df)
+        st.pyplot(fig)
+        
+        # Word cloud
+        st.subheader('Word Cloud dari Komentar')
+        text = ' '.join(df['Komentar'])
+        wordcloud = WordCloud(width=800, height=400).generate(text)
+        plt.figure(figsize=(10, 8))
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis("off")
+        st.pyplot()
+        
+        # Named Entity Recognition (NER)
+        st.subheader('Contoh Named Entity Recognition (NER)')
+        text = df['Komentar'].iloc[0]
+        nlp = spacy.load('en_core_web_sm')
+        doc = nlp(text)
+        html = displacy.render(doc, style='ent')
+        st.write(html, unsafe_allow_html=True)
+        
+    elif activity == "Model Prediksi":
+        st.subheader("Prediksi Kategori Cyberbullying")
+        
+        # Preprocess text data
+        df['cleaned_text'] = df['Komentar'].apply(clean_text)
+        
+        # Create Bag of Words model
+        cv = CountVectorizer()
+        X = cv.fit_transform(df['cleaned_text']).toarray()
+        y = df['Kategori']
+        
+        # Train-test split
+        from sklearn.model_selection import train_test_split
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        
+        # Train a Logistic Regression model
+        clf = LogisticRegression(max_iter=1000)
+        clf.fit(X_train, y_train)
+        
+        # Make predictions
+        y_pred = clf.predict(X_test)
+        
+        # Evaluate the model
+        accuracy = accuracy_score(y_test, y_pred)
+        st.write(f'Accuracy: {accuracy:.2f}')
+        
+        # Confusion matrix
+        st.subheader('Confusion Matrix')
+        cm = confusion_matrix(y_test, y_pred)
+        st.write(cm)
+        
+        # Classification report
+        st.subheader('Classification Report')
+        report = classification_report(y_test, y_pred)
+        st.write(report)
 
-        st.subheader("Word Cloud")
-        image = Image.open('wordcloud.png')
-        st.image(image, use_column_width=True)
+if __name__ == '__main__':
+    main()
