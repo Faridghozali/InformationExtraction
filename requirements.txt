@@ -9,4 +9,3 @@ spacy
 wordcloud 
 pyLDAvis
 gensim 
-upgradescipy
