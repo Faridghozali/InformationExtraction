@@ -40,7 +40,7 @@ def clean_text(text):
 # Load the dataset
 @st.cache
 def load_data():
-    df = pd.read_csv(DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
+    df = pd.read_csv(DATASET.csv')
     return df
 
 # Main function to run the app
