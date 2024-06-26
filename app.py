@@ -4,6 +4,9 @@ from sklearn.feature_extraction.text import CountVectorizer
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
+def load_data():
+    rating = pd.read_csv('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
+    
 # Fungsi untuk ekstraksi n-gram
 def extract_ngrams(texts, ngram_range=(1, 2)):
     vectorizer = CountVectorizer(ngram_range=ngram_range, stop_words='english')
