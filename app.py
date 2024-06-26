@@ -6,11 +6,6 @@ import matplotlib.pyplot as plt
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-import string
-
-# Download stopwords dan punkt untuk tokenization
-nltk.download('punkt')
-nltk.download('stopwords')
 
 # Load stopwords bahasa Indonesia
 stop_words = set(stopwords.words('indonesian'))
