@@ -11,10 +11,8 @@ from nltk.tokenize import word_tokenize
 try:
     nltk.data.find('corpora/stopwords.zip')
 except:
-    nltk.download('stopwords')
-
-nltk.download('stopwords', quiet=True)
-
+    nltk.download('stopwords', quiet=True)
+    
 # Load stopwords for Indonesian
 stop_words = stopwords.words('indonesian')
 
