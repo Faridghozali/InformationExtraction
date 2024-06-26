@@ -47,13 +47,24 @@ if selected_tab == 'Data dan Penjelasan':
     # Display dataset table
     st.dataframe(df_dataset)
 
-    st.markdown("""
-    ### Data yang sudah di preprocessing
-    """)
+    # Generate and display word cloud for dataset
+    st.subheader('WordCloud Dataset')
+    df_all_texts = ' '.join(df_dataset['text'].astype(str).tolist())  # Combine all texts into one string
+    df_ngrams_all = extract_ngrams([df_all_texts])
+    wordcloud_all = generate_wordcloud(df_ngrams_all)
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud_all, interpolation='bilinear')
+    plt.axis('off')
+    st.pyplot(plt)
 
-    # Load preprocessed data (if available)
-    df = load_data('DataPba.csv')
-    st.dataframe(df)
+    # Generate and display histogram for top 20 n-grams in dataset
+    st.subheader('Histogram Top 20 N-gram Dataset')
+    plt.figure(figsize=(12, 6))
+    plt.bar(df_ngrams_all['ngram'].head(20), df_ngrams_all['count'].head(20))
+    plt.xticks(rotation=45, ha='right')
+    plt.xlabel('N-gram')
+    plt.ylabel('Count')
+    st.pyplot(plt)
 
 elif selected_tab == 'Ekstraksi N-gram':
     st.subheader('Ekstraksi N-gram')
@@ -71,19 +82,10 @@ elif selected_tab == 'Ekstraksi N-gram':
         st.subheader('Frekuensi N-gram')
         st.dataframe(df_ngrams)
 
-        # Generate and display word cloud
+        # Generate and display word cloud for input text
         st.subheader('WordCloud N-gram')
         wordcloud = generate_wordcloud(df_ngrams)
         plt.figure(figsize=(10, 5))
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
-        st.pyplot(plt)
-
-        # Generate and display histogram for top 20 n-grams
-        st.subheader('Histogram Top 20 N-gram')
-        plt.figure(figsize=(12, 6))
-        plt.bar(df_ngrams['ngram'].head(20), df_ngrams['count'].head(20))
-        plt.xticks(rotation=45, ha='right')
-        plt.xlabel('N-gram')
-        plt.ylabel('Count')
         st.pyplot(plt)
