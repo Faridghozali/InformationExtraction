@@ -4,9 +4,11 @@ from sklearn.feature_extraction.text import CountVectorizer
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
-def load_data():
-    rating = pd.read_csv('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
-    
+# Fungsi untuk memuat dataset
+def load_data(file_path):
+    df = pd.read_csv(file_path)
+    return df
+
 # Fungsi untuk ekstraksi n-gram
 def extract_ngrams(texts, ngram_range=(1, 2)):
     vectorizer = CountVectorizer(ngram_range=ngram_range, stop_words='english')
@@ -55,8 +57,16 @@ elif selected_tab == 'Data dan Penjelasan':
     st.markdown("""
     Di tab ini, Anda dapat menampilkan semua data yang relevan dan penjelasan terkait analisis atau hasil dari ekstraksi pola ujaran kebencian.
     
-    Misalnya, Anda dapat menyertakan:
-    - Grafik atau visualisasi tambahan
-    - Analisis atau interpretasi dari data yang diekstraksi
+    ### Tabel Dataset: DATASET CYBERBULLYING INSTAGRAM - FINAL
     """)
 
+    # Memuat dataset
+    df_dataset = load_data('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
+    
+    # Menampilkan tabel dataset
+    st.dataframe(df_dataset)
+
+    st.markdown("""
+    ### Penjelasan Dataset
+    Anda dapat menambahkan penjelasan tambahan tentang dataset ini di sini.
+    """)
