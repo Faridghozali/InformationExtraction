@@ -65,12 +65,13 @@ elif selected_tab == 'Data dan Penjelasan':
 
     # Menampilkan tabel dataset
     st.dataframe(df_dataset)
-    df = load_data('DataPba.csv')
-    st.dataframe(df)
 
 
 
     st.markdown("""
-    ### Penjelasan Dataset
-    Anda dapat menambahkan penjelasan tambahan tentang dataset ini di sini.
+    ### Data yang sudah di preprocessing
     """)
+
+    df = load_data('DataPba.csv')
+    st.dataframe(df)
+
