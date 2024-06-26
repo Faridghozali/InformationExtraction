@@ -19,20 +19,13 @@ def extract_ngrams(texts, ngram_range=(1, 2)):
     df_ngrams = df_ngrams.sort_values(by='count', ascending=False)
     return df_ngrams
 
-# Fungsi untuk membuat WordCloud dari seluruh teks dalam dataset
-def generate_wordcloud_all_texts(df, text_column='text'):
-    all_texts = ' '.join(df[text_column].astype(str).tolist())
-    vectorizer = CountVectorizer(stop_words='english')
-    X = vectorizer.fit_transform([all_texts])
-    wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(dict(zip(vectorizer.get_feature_names_out(), X.toarray()[0])))
-    return wordcloud
-
 # Judul aplikasi
 st.title('Ekstraksi Pola Ujaran Kebencian')
 
 # Sidebar dengan tab tambahan
 with st.sidebar:
     st.subheader('Menu')
+    # Urutan sidebar diubah disini
     selected_tab = st.radio('Pilih Tab:', ('Data dan Penjelasan', 'Ekstraksi N-gram'))
 
 # Konten utama berdasarkan tab yang dipilih
@@ -49,14 +42,6 @@ if selected_tab == 'Data dan Penjelasan':
 
     # Menampilkan tabel dataset
     st.dataframe(df_dataset)
-
-    # Generate and display word cloud for all texts in dataset
-    st.subheader('WordCloud Seluruh Teks')
-    wordcloud_all_texts = generate_wordcloud_all_texts(df_dataset, text_column='text')
-    plt.figure(figsize=(10, 5))
-    plt.imshow(wordcloud_all_texts, interpolation='bilinear')
-    plt.axis('off')
-    st.pyplot(plt)
 
     st.markdown("""
     ### Data yang sudah di preprocessing
