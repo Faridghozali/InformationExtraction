@@ -41,14 +41,13 @@ if selected_tab == 'Data dan Penjelasan':
     
     ### Tabel Dataset: DATASET CYBERBULLYING INSTAGRAM - FINAL
     """)
-     # Menampilkan tabel dataset
-    st.dataframe(df_dataset)
     
     # Memuat dataset
     df_dataset = load_data('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
 
-   
-
+    # Menampilkan tabel dataset
+    st.dataframe(df_dataset)
+    
     st.markdown("""
     ### WordCloud Berdasarkan Kategori
     """)
