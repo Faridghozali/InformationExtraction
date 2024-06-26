@@ -18,14 +18,6 @@ def extract_ngrams(texts, ngram_range=(1, 2)):
     df_ngrams = pd.DataFrame({'ngram': ngrams, 'count': counts})
     df_ngrams = df_ngrams.sort_values(by='count', ascending=False)
     return df_ngrams
-    
-# Judul aplikasi
-st.title('Ekstraksi Pola Ujaran Kebencian')
-
-# Sidebar dengan tab tambahan
-with st.sidebar:
-    st.subheader('Menu')
-    selected_tab = st.radio('Pilih Tab:', ('Ekstraksi ', 'Data dan Penjelasan'))
 
 # Judul aplikasi
 st.title('Ekstraksi Pola Ujaran Kebencian')
