@@ -76,7 +76,7 @@ if selected_tab == 'Extract N-grams':
         preprocessed_text = preprocess_text(user_input)
         
         # Split preprocessed text into sentences
-        texts = preprocessed_text.split('\n')
+        texts = [preprocessed_text]  # Change to list with one item
 
         # Extract n-grams
         df_ngrams = extract_ngrams(texts)
