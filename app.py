@@ -31,7 +31,7 @@ def extract_ngrams(tokens, n):
     n_grams = ngrams(tokens, n)
     return [' '.join(grams) for grams in n_grams]
 
-# Function to plot word cloud
+# Function to plot word cloud (not implemented in this example)
 def plot_word_cloud(text_data):
     # Generate word cloud or other visualizations
     pass
@@ -48,8 +48,11 @@ def main():
         df = pd.read_csv(uploaded_file)
         st.dataframe(df.head())
 
+        # Ensure the column name matches your CSV file
+        text_column_name = 'text'  # Replace with your actual column name containing text data
+
         # Clean and preprocess text
-        df['clean_text'] = df['text_column'].apply(clean_text)
+        df['clean_text'] = df[text_column_name].apply(clean_text)
         df['tokens'] = df['clean_text'].apply(preprocess_text)
 
         # Extract n-grams
