@@ -43,12 +43,6 @@ if selected_tab == 'Data dan Penjelasan':
     # Menampilkan tabel dataset
     st.dataframe(df_dataset)
 
-    # Ekstraksi teks untuk WordCloud dari kolom tertentu, misalnya 'text'
-    texts = df_dataset['text'].astype(str).tolist()
-
-    # Ekstraksi n-gram dari teks
-    df_ngrams = extract_ngrams(texts)
-
     # Visualisasi WordCloud
     wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(df_ngrams.set_index('ngram').to_dict()['count'])
 
