@@ -48,10 +48,15 @@ def main():
         df = pd.read_csv(uploaded_file)
         st.dataframe(df.head())
 
-        # Ensure the column name matches your CSV file
-        text_column_name = 'YourColumnNameHere'  # Replace with your actual column name containing text data
+        # Display available column names for debugging
+        st.sidebar.subheader('Available Columns:')
+        st.sidebar.write(df.columns.tolist())
 
-        if text_column_name in df.columns:
+        # Allow user to select the column containing text data
+        text_column_name = st.sidebar.selectbox("Select Column Containing Text Data", df.columns.tolist())
+
+        # Proceed only if a column is selected
+        if text_column_name:
             # Clean and preprocess text
             df['clean_text'] = df[text_column_name].apply(clean_text)
             df['tokens'] = df['clean_text'].apply(preprocess_text)
@@ -72,7 +77,7 @@ def main():
             plot_word_cloud(df['clean_text'])
 
         else:
-            st.sidebar.error(f'Column "{text_column_name}" not found in the uploaded CSV file.')
+            st.sidebar.warning('Please select a column containing text data.')
 
     else:
         st.sidebar.info('Upload a CSV file to start')
