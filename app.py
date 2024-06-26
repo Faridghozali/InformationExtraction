@@ -7,47 +7,30 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
-# Mengunduh stopwords NLTK jika belum diunduh
+# Download NLTK stopwords if not already downloaded
 try:
     nltk.data.find('corpora/stopwords.zip')
 except:
     nltk.download('stopwords')
 
-# Menggunakan stopwords bahasa Indonesia
-try:
-    stop_words = stopwords.words('indonesian')
-except:
-    nltk.download('stopwords')
-    stop_words = stopwords.words('indonesian')
+# Load stopwords for Indonesian
+stop_words = stopwords.words('indonesian')
 
-# Load stopwords bahasa Indonesia
-stop_words = set(stopwords.words('indonesian'))
-
-# Fungsi untuk preprocessing teks dalam bahasa Indonesia
+# Function to preprocess Indonesian text
 def preprocess_text_indonesia(text):
-    # Lowercasing
-    text = text.lower()
-    
-    # Tokenization
-    tokens = word_tokenize(text)
-    
-    # Menghapus tanda baca dan karakter khusus
-    tokens = [word for word in tokens if word.isalnum()]
-    
-    # Menghapus stopwords dalam bahasa Indonesia
-    tokens = [word for word in tokens if not word in stop_words]
-    
-    # Menggabungkan kembali tokens menjadi kalimat
-    preprocessed_text = ' '.join(tokens)
-    
+    text = text.lower()  # Lowercasing
+    tokens = word_tokenize(text)  # Tokenization
+    tokens = [word for word in tokens if word.isalnum()]  # Remove punctuation
+    tokens = [word for word in tokens if word not in stop_words]  # Remove stopwords
+    preprocessed_text = ' '.join(tokens)  # Join tokens back into text
     return preprocessed_text
 
-# Fungsi untuk memuat dataset
+# Function to load dataset
 def load_data(file_path):
     df = pd.read_csv(file_path)
     return df
 
-# Fungsi untuk ekstraksi n-gram
+# Function to extract n-grams
 def extract_ngrams(texts, ngram_range=(1, 2)):
     vectorizer = CountVectorizer(ngram_range=ngram_range, stop_words=None)
     X = vectorizer.fit_transform(texts)
@@ -57,34 +40,26 @@ def extract_ngrams(texts, ngram_range=(1, 2)):
     df_ngrams = df_ngrams.sort_values(by='count', ascending=False)
     return df_ngrams
 
-# Judul aplikasi
+# Main title of the application
 st.title('Ekstraksi Pola Ujaran Kebencian')
 
-# Sidebar dengan tab tambahan
+# Sidebar with additional tabs
 with st.sidebar:
     st.subheader('Menu')
     selected_tab = st.radio('Pilih Tab:', ('Ekstraksi N-gram', 'Data dan Penjelasan'))
 
-# Konten utama berdasarkan tab yang dipilih
+# Main content based on selected tab
 if selected_tab == 'Ekstraksi N-gram':
-    # Input teks dari pengguna
     user_input = st.text_area("Masukkan teks yang ingin dianalisis:", "")
 
     if user_input:
-        # Preprocessing teks dalam bahasa Indonesia
         preprocessed_text = preprocess_text_indonesia(user_input)
-        
-        # Pisahkan input yang sudah diproses menjadi kalimat-kalimat
         texts = preprocessed_text.split('\n')
-
-        # Ekstraksi n-gram
         df_ngrams = extract_ngrams(texts)
 
-        # Tampilkan tabel n-gram dan frekuensinya
         st.subheader('Frekuensi N-gram')
         st.dataframe(df_ngrams)
 
-        # Visualisasi WordCloud
         wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(df_ngrams.set_index('ngram').to_dict()['count'])
 
         st.subheader('WordCloud N-gram')
@@ -101,10 +76,8 @@ elif selected_tab == 'Data dan Penjelasan':
     ### Tabel Dataset: DATASET CYBERBULLYING INSTAGRAM - FINAL
     """)
 
-    # Memuat dataset
     df_dataset = load_data('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
     
-    # Menampilkan tabel dataset
     st.dataframe(df_dataset)
 
     st.markdown("""
