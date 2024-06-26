@@ -12,11 +12,8 @@ try:
     nltk.data.find('corpora/stopwords.zip')
 except:
     nltk.download('stopwords', quiet=True)
-    
-# Load stopwords for Indonesian
-stop_words = stopwords.words('indonesian')
 
-# Load stopwords bahasa Indonesia
+# Load stopwords for Indonesian
 stop_words = set(stopwords.words('indonesian'))
 
 # Fungsi untuk preprocessing teks dalam bahasa Indonesia
@@ -40,8 +37,11 @@ def preprocess_text_indonesia(text):
 
 # Fungsi untuk memuat dataset
 def load_data(file_path):
-    df = pd.read_csv(file_path)
-    return df
+    try:
+        df = pd.read_csv(file_path)
+        return df
+    except Exception as e:
+        st.error(f"Error: {e}")
 
 # Fungsi untuk ekstraksi n-gram
 def extract_ngrams(texts, ngram_range=(1, 2)):
@@ -88,6 +88,7 @@ if selected_tab == 'Ekstraksi N-gram':
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
         st.pyplot(plt)
+        plt.close()
 
 elif selected_tab == 'Data dan Penjelasan':
     st.subheader('Data dan Penjelasan')
@@ -100,8 +101,9 @@ elif selected_tab == 'Data dan Penjelasan':
     # Memuat dataset
     df_dataset = load_data('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
     
-    # Menampilkan tabel dataset
-    st.dataframe(df_dataset)
+    if df_dataset is not None:
+        # Menampilkan tabel dataset
+        st.dataframe(df_dataset)
 
     st.markdown("""
     ### Penjelasan Dataset
