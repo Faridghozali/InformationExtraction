@@ -1,11 +1,5 @@
-streamlit==1.4.0
-pandas
-numpy
-matplotlib
-seaborn
+streamlit
 scikit-learn
-nltk
+pandas
 wordcloud
-spacy
-gensim
-scipy
+matplotlib
