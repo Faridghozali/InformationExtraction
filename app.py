@@ -9,32 +9,6 @@ def load_data(file_path):
     df = pd.read_csv(file_path)
     return df
 
-# Download stopwords dan punkt untuk tokenization
-nltk.download('punkt')
-nltk.download('stopwords')
-
-# Load stopwords bahasa Inggris
-stop_words = set(stopwords.words('english'))
-
-# Fungsi untuk preprocessing teks
-def preprocess_text(text):
-    # Lowercasing
-    text = text.lower()
-    
-    # Tokenization
-    tokens = word_tokenize(text)
-    
-    # Menghapus tanda baca dan karakter khusus
-    tokens = [word for word in tokens if word.isalnum()]
-    
-    # Menghapus stopwords
-    tokens = [word for word in tokens if not word in stop_words]
-    
-    # Menggabungkan kembali tokens menjadi kalimat
-    preprocessed_text = ' '.join(tokens)
-    
-    return preprocessed_text
-
 # Fungsi untuk ekstraksi n-gram
 def extract_ngrams(texts, ngram_range=(1, 2)):
     vectorizer = CountVectorizer(ngram_range=ngram_range, stop_words='english')
@@ -44,7 +18,7 @@ def extract_ngrams(texts, ngram_range=(1, 2)):
     df_ngrams = pd.DataFrame({'ngram': ngrams, 'count': counts})
     df_ngrams = df_ngrams.sort_values(by='count', ascending=False)
     return df_ngrams
-
+    
 # Judul aplikasi
 st.title('Ekstraksi Pola Ujaran Kebencian')
 
@@ -67,11 +41,8 @@ if selected_tab == 'Ekstraksi N-gram':
     user_input = st.text_area("Masukkan teks yang ingin dianalisis:", "")
 
     if user_input:
-        # Preprocessing teks
-        preprocessed_text = preprocess_text(user_input)
-        
-        # Pisahkan input yang sudah diproses menjadi kalimat-kalimat
-        texts = preprocessed_text.split('\n')
+        # Pisahkan input menjadi kalimat-kalimat
+        texts = user_input.split('\n')
 
         # Ekstraksi n-gram
         df_ngrams = extract_ngrams(texts)
