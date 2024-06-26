@@ -3,31 +3,6 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
-import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-
-# Load stopwords bahasa Indonesia
-stop_words = set(stopwords.words('indonesian'))
-
-# Fungsi untuk preprocessing teks dalam bahasa Indonesia
-def preprocess_text_indonesia(text):
-    # Lowercasing
-    text = text.lower()
-    
-    # Tokenization
-    tokens = word_tokenize(text)
-    
-    # Menghapus tanda baca dan karakter khusus
-    tokens = [word for word in tokens if word.isalnum()]
-    
-    # Menghapus stopwords dalam bahasa Indonesia
-    tokens = [word for word in tokens if not word in stop_words]
-    
-    # Menggabungkan kembali tokens menjadi kalimat
-    preprocessed_text = ' '.join(tokens)
-    
-    return preprocessed_text
 
 # Fungsi untuk memuat dataset
 def load_data(file_path):
@@ -36,7 +11,7 @@ def load_data(file_path):
 
 # Fungsi untuk ekstraksi n-gram
 def extract_ngrams(texts, ngram_range=(1, 2)):
-    vectorizer = CountVectorizer(ngram_range=ngram_range, stop_words=None)
+    vectorizer = CountVectorizer(ngram_range=ngram_range, stop_words='english')
     X = vectorizer.fit_transform(texts)
     ngrams = vectorizer.get_feature_names_out()
     counts = X.toarray().sum(axis=0)
@@ -58,11 +33,8 @@ if selected_tab == 'Ekstraksi N-gram':
     user_input = st.text_area("Masukkan teks yang ingin dianalisis:", "")
 
     if user_input:
-        # Preprocessing teks dalam bahasa Indonesia
-        preprocessed_text = preprocess_text_indonesia(user_input)
-        
-        # Pisahkan input yang sudah diproses menjadi kalimat-kalimat
-        texts = preprocessed_text.split('\n')
+        # Pisahkan input menjadi kalimat-kalimat
+        texts = user_input.split('\n')
 
         # Ekstraksi n-gram
         df_ngrams = extract_ngrams(texts)
