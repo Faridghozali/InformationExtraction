@@ -4,6 +4,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import nltk
+from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import string
 
@@ -14,8 +15,14 @@ except:
     nltk.download('stopwords', quiet=True)
     nltk.download('punkt', quiet=True)
 
+# Check and download NLTK Punkt tokenizer for Indonesian
+try:
+    nltk.data.find('tokenizers/punkt/indonesian.pickle')
+except:
+    nltk.download('punkt', quiet=True)
+
 # Load stopwords for Indonesian
-stop_words = set(nltk.corpus.stopwords.words('indonesian'))
+stop_words = set(stopwords.words('indonesian'))
 
 # Function to preprocess text
 def preprocess_text(text):
