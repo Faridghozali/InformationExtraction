@@ -4,7 +4,6 @@ from sklearn.feature_extraction.text import CountVectorizer
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import nltk
-from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import string
 
@@ -15,8 +14,8 @@ except:
     nltk.download('stopwords', quiet=True)
     nltk.download('punkt', quiet=True)
 
-# Load stopwords for English
-stop_words = set(stopwords.words('indonesia'))
+# Load stopwords for Indonesian
+stop_words = set(nltk.corpus.stopwords.words('indonesian'))
 
 # Function to preprocess text
 def preprocess_text(text):
@@ -44,7 +43,7 @@ def load_data(file_path):
 
 # Function to extract n-grams
 def extract_ngrams(texts, ngram_range=(1, 2)):
-    vectorizer = CountVectorizer(ngram_range=ngram_range, stop_words='english')
+    vectorizer = CountVectorizer(ngram_range=ngram_range, stop_words=stop_words)
     X = vectorizer.fit_transform(texts)
     ngrams = vectorizer.get_feature_names_out()
     counts = X.toarray().sum(axis=0)
