@@ -4,3 +4,5 @@ pandas
 wordcloud
 matplotlib
 nltk
+python -m nltk.downloader punkt
+python -m nltk.downloader stopwords
