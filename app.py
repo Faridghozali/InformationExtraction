@@ -17,26 +17,43 @@ def extract_ngrams(texts, ngram_range=(1, 2)):
 # Judul aplikasi
 st.title('Ekstraksi Pola Ujaran Kebencian')
 
-# Input teks dari pengguna
-user_input = st.text_area("Masukkan teks yang ingin dianalisis:", "")
+# Sidebar dengan tab tambahan
+with st.sidebar:
+    st.subheader('Menu')
+    selected_tab = st.radio('Pilih Tab:', ('Ekstraksi N-gram', 'Data dan Penjelasan'))
 
-if user_input:
-    # Pisahkan input menjadi kalimat-kalimat
-    texts = user_input.split('\n')
+# Konten utama berdasarkan tab yang dipilih
+if selected_tab == 'Ekstraksi N-gram':
+    # Input teks dari pengguna
+    user_input = st.text_area("Masukkan teks yang ingin dianalisis:", "")
+
+    if user_input:
+        # Pisahkan input menjadi kalimat-kalimat
+        texts = user_input.split('\n')
+
+        # Ekstraksi n-gram
+        df_ngrams = extract_ngrams(texts)
+
+        # Tampilkan tabel n-gram dan frekuensinya
+        st.subheader('Frekuensi N-gram')
+        st.dataframe(df_ngrams)
+
+        # Visualisasi WordCloud
+        wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(df_ngrams.set_index('ngram').to_dict()['count'])
+
+        st.subheader('WordCloud N-gram')
+        plt.figure(figsize=(10, 5))
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis('off')
+        st.pyplot(plt)
+
+elif selected_tab == 'Data dan Penjelasan':
+    st.subheader('Data dan Penjelasan')
+    st.markdown("""
+    Di tab ini, Anda dapat menampilkan semua data yang relevan dan penjelasan terkait analisis atau hasil dari ekstraksi pola ujaran kebencian.
     
-    # Ekstraksi n-gram
-    df_ngrams = extract_ngrams(texts)
-    
-    # Tampilkan tabel n-gram dan frekuensinya
-    st.subheader('Frekuensi N-gram')
-    st.dataframe(df_ngrams)
-    
-    # Visualisasi WordCloud
-    wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(df_ngrams.set_index('ngram').to_dict()['count'])
-    
-    st.subheader('WordCloud N-gram')
-    plt.figure(figsize=(10, 5))
-    plt.imshow(wordcloud, interpolation='bilinear')
-    plt.axis('off')
-    st.pyplot(plt)
+    Misalnya, Anda dapat menyertakan:
+    - Grafik atau visualisasi tambahan
+    - Analisis atau interpretasi dari data yang diekstraksi
+    """)
 
