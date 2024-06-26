@@ -4,4 +4,3 @@ pandas
 wordcloud
 matplotlib
 nltk
-sklearn
