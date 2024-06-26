@@ -4,6 +4,19 @@ from sklearn.feature_extraction.text import CountVectorizer
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
+# Mengunduh stopwords NLTK jika belum diunduh
+try:
+    nltk.data.find('corpora/stopwords.zip')
+except:
+    nltk.download('stopwords')
+
+# Menggunakan stopwords bahasa Indonesia
+try:
+    stop_words = stopwords.words('indonesian')
+except:
+    nltk.download('stopwords')
+    stop_words = stopwords.words('indonesian')
+    
 # Fungsi untuk memuat dataset
 def load_data(file_path):
     df = pd.read_csv(file_path)
