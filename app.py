@@ -53,7 +53,7 @@ if selected_tab == 'Data dan Penjelasan':
     """)
 
     # Memastikan kolom 'kategori' ada dalam dataset
-    if 'kategori' in df_dataset.columns:
+    if 'Kategori' in df_dataset.columns:
         # Menggabungkan teks berdasarkan kategori
         bullying_texts = ' '.join(df_dataset[df_dataset['kategori'] == 'bullying']['text'].astype(str).tolist())
         non_bullying_texts = ' '.join(df_dataset[df_dataset['kategori'] == 'non bullying']['text'].astype(str).tolist())
