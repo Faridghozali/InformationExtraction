@@ -49,26 +49,30 @@ def main():
         st.dataframe(df.head())
 
         # Ensure the column name matches your CSV file
-        text_column_name = 'text'  # Replace with your actual column name containing text data
+        text_column_name = 'YourColumnNameHere'  # Replace with your actual column name containing text data
 
-        # Clean and preprocess text
-        df['clean_text'] = df[text_column_name].apply(clean_text)
-        df['tokens'] = df['clean_text'].apply(preprocess_text)
+        if text_column_name in df.columns:
+            # Clean and preprocess text
+            df['clean_text'] = df[text_column_name].apply(clean_text)
+            df['tokens'] = df['clean_text'].apply(preprocess_text)
 
-        # Extract n-grams
-        n = st.sidebar.number_input("Select n for n-grams", min_value=1, max_value=3, value=2)
-        df['ngrams'] = df['tokens'].apply(lambda x: extract_ngrams(x, n))
+            # Extract n-grams
+            n = st.sidebar.number_input("Select n for n-grams", min_value=1, max_value=3, value=2)
+            df['ngrams'] = df['tokens'].apply(lambda x: extract_ngrams(x, n))
 
-        # Analyze frequencies and patterns
-        st.subheader('Top n-grams')
-        all_ngrams = [ngram for ngrams_list in df['ngrams'] for ngram in ngrams_list]
-        ngram_counter = Counter(all_ngrams)
-        top_ngrams = ngram_counter.most_common(10)
-        st.write(top_ngrams)
+            # Analyze frequencies and patterns
+            st.subheader('Top n-grams')
+            all_ngrams = [ngram for ngrams_list in df['ngrams'] for ngram in ngrams_list]
+            ngram_counter = Counter(all_ngrams)
+            top_ngrams = ngram_counter.most_common(10)
+            st.write(top_ngrams)
 
-        # Plot word cloud or other visualizations
-        st.subheader('Word Cloud')
-        plot_word_cloud(df['clean_text'])
+            # Plot word cloud or other visualizations
+            st.subheader('Word Cloud')
+            plot_word_cloud(df['clean_text'])
+
+        else:
+            st.sidebar.error(f'Column "{text_column_name}" not found in the uploaded CSV file.')
 
     else:
         st.sidebar.info('Upload a CSV file to start')
