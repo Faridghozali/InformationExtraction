@@ -4,12 +4,12 @@ from sklearn.feature_extraction.text import CountVectorizer
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
     
-# Function to load dataset
+# Fungsi untuk memuat dataset
 def load_data(file_path):
     df = pd.read_csv(file_path)
     return df
 
-# Function to extract n-grams
+# Fungsi untuk ekstraksi n-gram
 def extract_ngrams(texts, ngram_range=(1, 2)):
     vectorizer = CountVectorizer(ngram_range=ngram_range, stop_words='english')
     X = vectorizer.fit_transform(texts)
@@ -19,20 +19,16 @@ def extract_ngrams(texts, ngram_range=(1, 2)):
     df_ngrams = df_ngrams.sort_values(by='count', ascending=False)
     return df_ngrams
 
-# Function to generate word cloud
-def generate_wordcloud(df_ngrams):
-    wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(df_ngrams.set_index('ngram').to_dict()['count'])
-    return wordcloud
-
-# Title of the application
+# Judul aplikasi
 st.title('Ekstraksi Pola Ujaran Kebencian')
 
-# Sidebar with additional tabs
+# Sidebar dengan tab tambahan
 with st.sidebar:
     st.subheader('Menu')
+    # Urutan sidebar diubah disini
     selected_tab = st.radio('Pilih Tab:', ('Data dan Penjelasan', 'Ekstraksi N-gram'))
 
-# Main content based on selected tab
+# Konten utama berdasarkan tab yang dipilih
 if selected_tab == 'Data dan Penjelasan':
     st.subheader('Data dan Penjelasan')
     st.markdown("""
@@ -41,50 +37,39 @@ if selected_tab == 'Data dan Penjelasan':
     ### Tabel Dataset: DATASET CYBERBULLYING INSTAGRAM - FINAL
     """)
 
-    # Load dataset
+    # Memuat dataset
     df_dataset = load_data('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
 
-    # Display dataset table
+    # Menampilkan tabel dataset
     st.dataframe(df_dataset)
 
-    # Generate and display word cloud for dataset
-    st.subheader('WordCloud Dataset')
-    df_all_texts = ' '.join(df_dataset['text'].astype(str).tolist())  # Combine all texts into one string
-    df_ngrams_all = extract_ngrams([df_all_texts])
-    wordcloud_all = generate_wordcloud(df_ngrams_all)
-    plt.figure(figsize=(10, 5))
-    plt.imshow(wordcloud_all, interpolation='bilinear')
-    plt.axis('off')
-    st.pyplot(plt)
+    st.markdown("""
+    ### Data yang sudah di preprocessing
+    """)
 
-    # Generate and display histogram for top 20 n-grams in dataset
-    st.subheader('Histogram Top 20 N-gram Dataset')
-    plt.figure(figsize=(12, 6))
-    plt.bar(df_ngrams_all['ngram'].head(20), df_ngrams_all['count'].head(20))
-    plt.xticks(rotation=45, ha='right')
-    plt.xlabel('N-gram')
-    plt.ylabel('Count')
-    st.pyplot(plt)
+    df = load_data('DataPba.csv')
+    st.dataframe(df)
 
 elif selected_tab == 'Ekstraksi N-gram':
     st.subheader('Ekstraksi N-gram')
-    # User input text
+    # Input teks dari pengguna
     user_input = st.text_area("Masukkan teks yang ingin dianalisis:", "")
 
     if user_input:
-        # Split input into sentences
+        # Pisahkan input menjadi kalimat-kalimat
         texts = user_input.split('\n')
 
-        # Extract n-grams
+        # Ekstraksi n-gram
         df_ngrams = extract_ngrams(texts)
 
-        # Display n-gram frequencies as a table
+        # Tampilkan tabel n-gram dan frekuensinya
         st.subheader('Frekuensi N-gram')
         st.dataframe(df_ngrams)
 
-        # Generate and display word cloud for input text
+        # Visualisasi WordCloud
+        wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(df_ngrams.set_index('ngram').to_dict()['count'])
+
         st.subheader('WordCloud N-gram')
-        wordcloud = generate_wordcloud(df_ngrams)
         plt.figure(figsize=(10, 5))
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
