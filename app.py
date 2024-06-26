@@ -3,9 +3,8 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
-
+    
 # Fungsi untuk memuat dataset
-@st.cache
 def load_data(file_path):
     df = pd.read_csv(file_path)
     return df
@@ -26,6 +25,7 @@ st.title('Ekstraksi Pola Ujaran Kebencian')
 # Sidebar dengan tab tambahan
 with st.sidebar:
     st.subheader('Menu')
+    # Urutan sidebar diubah disini
     selected_tab = st.radio('Pilih Tab:', ('Data dan Penjelasan', 'Ekstraksi N-gram'))
 
 # Konten utama berdasarkan tab yang dipilih
@@ -36,40 +36,42 @@ if selected_tab == 'Data dan Penjelasan':
     
     ### Tabel Dataset: DATASET CYBERBULLYING INSTAGRAM - FINAL
     """)
-    
+
     # Memuat dataset
     df_dataset = load_data('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
 
-    # Menggabungkan semua teks dalam satu variabel
-    all_texts = ' '.join(df_dataset['text'].astype(str).tolist())
+    # Menampilkan tabel dataset
+    st.dataframe(df_dataset)
 
-    # Ekstraksi n-gram dari teks
-    df_ngrams = extract_ngrams([all_texts])
+    st.markdown("""
+    ### Data yang sudah di preprocessing
+    """)
 
-    # Visualisasi WordCloud
-    wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(df_ngrams.set_index('ngram').to_dict()['count'])
-
-    st.subheader('WordCloud N-gram dari Dataset')
-    plt.figure(figsize=(10, 5))
-    plt.imshow(wordcloud, interpolation='bilinear')
-    plt.axis('off')
-    st.pyplot(plt)
+    df = load_data('DataPba.csv')
+    st.dataframe(df)
 
 elif selected_tab == 'Ekstraksi N-gram':
     st.subheader('Ekstraksi N-gram')
+    # Input teks dari pengguna
     user_input = st.text_area("Masukkan teks yang ingin dianalisis:", "")
-    
+
     if user_input:
+        # Pisahkan input menjadi kalimat-kalimat
         texts = user_input.split('\n')
+
+        # Ekstraksi n-gram
         df_ngrams = extract_ngrams(texts)
-        
+
+        # Tampilkan tabel n-gram dan frekuensinya
         st.subheader('Frekuensi N-gram')
         st.dataframe(df_ngrams)
-        
+
+        # Visualisasi WordCloud
         wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(df_ngrams.set_index('ngram').to_dict()['count'])
-        
+
         st.subheader('WordCloud N-gram')
         plt.figure(figsize=(10, 5))
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
         st.pyplot(plt)
+        
