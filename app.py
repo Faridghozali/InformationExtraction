@@ -25,10 +25,33 @@ st.title('Ekstraksi Pola Ujaran Kebencian')
 # Sidebar dengan tab tambahan
 with st.sidebar:
     st.subheader('Menu')
-    selected_tab = st.radio('Pilih Tab:', ('Ekstraksi N-gram', 'Data dan Penjelasan'))
+    # Urutan sidebar diubah disini
+    selected_tab = st.radio('Pilih Tab:', ('Data dan Penjelasan', 'Ekstraksi N-gram'))
 
 # Konten utama berdasarkan tab yang dipilih
-if selected_tab == 'Ekstraksi N-gram':
+if selected_tab == 'Data dan Penjelasan':
+    st.subheader('Data dan Penjelasan')
+    st.markdown("""
+    Di tab ini, Anda dapat menampilkan semua data yang relevan dan penjelasan terkait analisis atau hasil dari ekstraksi pola ujaran kebencian.
+    
+    ### Tabel Dataset: DATASET CYBERBULLYING INSTAGRAM - FINAL
+    """)
+
+    # Memuat dataset
+    df_dataset = load_data('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
+
+    # Menampilkan tabel dataset
+    st.dataframe(df_dataset)
+
+    st.markdown("""
+    ### Data yang sudah di preprocessing
+    """)
+
+    df = load_data('DataPba.csv')
+    st.dataframe(df)
+
+elif selected_tab == 'Ekstraksi N-gram':
+    st.subheader('Ekstraksi N-gram')
     # Input teks dari pengguna
     user_input = st.text_area("Masukkan teks yang ingin dianalisis:", "")
 
@@ -51,26 +74,3 @@ if selected_tab == 'Ekstraksi N-gram':
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
         st.pyplot(plt)
-
-elif selected_tab == 'Data dan Penjelasan':
-    st.subheader('Data dan Penjelasan')
-    st.markdown("""
-    Di tab ini, Anda dapat menampilkan semua data yang relevan dan penjelasan terkait analisis atau hasil dari ekstraksi pola ujaran kebencian.
-    
-    ### Tabel Dataset: DATASET CYBERBULLYING INSTAGRAM - FINAL
-    """)
-
-    # Memuat dataset
-    df_dataset = load_data('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
-
-    # Menampilkan tabel dataset
-    st.dataframe(df_dataset)
-
-
-
-    st.markdown("""
-    ### Data yang sudah di preprocessing
-    """)
-
-    df = load_data('DataPba.csv')
-    st.dataframe(df)
