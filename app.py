@@ -16,7 +16,7 @@ except:
     nltk.download('punkt', quiet=True)
 
 # Load stopwords for English
-stop_words = set(stopwords.words('english'))
+stop_words = set(stopwords.words('indonesia'))
 
 # Function to preprocess text
 def preprocess_text(text):
