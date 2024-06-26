@@ -25,6 +25,7 @@ st.title('Ekstraksi Pola Ujaran Kebencian')
 # Sidebar dengan tab tambahan
 with st.sidebar:
     st.subheader('Menu')
+    # Urutan sidebar diubah disini
     selected_tab = st.radio('Pilih Tab:', ('Data dan Penjelasan', 'Ekstraksi N-gram'))
 
 # Konten utama berdasarkan tab yang dipilih
@@ -39,26 +40,15 @@ if selected_tab == 'Data dan Penjelasan':
     # Memuat dataset
     df_dataset = load_data('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
 
-    # Periksa nama kolom yang ada dalam DataFrame
-    st.write(df_dataset.columns)
+    # Menampilkan tabel dataset
+    st.dataframe(df_dataset)
 
-    # Menghitung jumlah label 'bullying' dan 'non-bullying' jika nama kolom benar
-    if 'label' in df_dataset.columns:
-        bullying_count = df_dataset[df_dataset['label'] == 'bullying'].shape[0]
-        non_bullying_count = df_dataset[df_dataset['label'] == 'non bullying'].shape[0]
+    st.markdown("""
+    ### Data yang sudah di preprocessing
+    """)
 
-        st.write(f"Jumlah 'bullying': {bullying_count}")
-        st.write(f"Jumlah 'non-bullying': {non_bullying_count}")
-
-        # Visualisasi jumlah label
-        st.subheader('Visualisasi Jumlah Label')
-        plt.figure(figsize=(8, 5))
-        plt.bar(['bullying', 'non-bullying'], [bullying_count, non_bullying_count])
-        plt.xlabel('Label')
-        plt.ylabel('Jumlah')
-        st.pyplot(plt)
-    else:
-        st.write("Kolom 'label' tidak ditemukan dalam dataset. Periksa kembali nama kolomnya.")
+    df = load_data('DataPba.csv')
+    st.dataframe(df)
 
 elif selected_tab == 'Ekstraksi N-gram':
     st.subheader('Ekstraksi N-gram')
