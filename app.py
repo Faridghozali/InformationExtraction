@@ -40,8 +40,11 @@ if selected_tab == 'Data dan Penjelasan':
     # Memuat dataset
     df_dataset = load_data('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
 
-    # Menampilkan tabel dataset
-    st.dataframe(df_dataset)
+    # Menggabungkan semua teks dalam satu variabel
+    all_texts = ' '.join(df_dataset['text'].astype(str).tolist())
+
+    # Ekstraksi n-gram dari teks
+    df_ngrams = extract_ngrams([all_texts])
 
     # Visualisasi WordCloud
     wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(df_ngrams.set_index('ngram').to_dict()['count'])
