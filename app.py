@@ -61,11 +61,14 @@ elif selected_tab == 'Data dan Penjelasan':
     """)
 
     # Memuat dataset
-    
+    df_dataset = load_data('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
+
     # Menampilkan tabel dataset
     st.dataframe(df_dataset)
 
     df = load_data('DataPba.csv')
+    st.dataframe(df)
+
 
 
     st.markdown("""
