@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
     
 # Fungsi untuk memuat dataset
 def load_data(file_path):
-    df = pd.read_csv(DataPba.csv)
+    df = pd.read_csv(file_path)
     return df
 
 # Fungsi untuk ekstraksi n-gram
