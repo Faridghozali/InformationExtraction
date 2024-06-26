@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
-    
+
 # Function to load dataset
 def load_data(file_path):
     df = pd.read_csv(file_path)
@@ -51,30 +51,34 @@ if selected_tab == 'Data dan Penjelasan':
     ### WordCloud Kalimat Bullying dan Non-Bullying
     """)
 
-    # Filter data based on labels
-    bullying_texts = ' '.join(df_dataset[df_dataset['label'] == 'bullying']['text'].astype(str).tolist())
-    non_bullying_texts = ' '.join(df_dataset[df_dataset['label'] == 'non bullying']['text'].astype(str).tolist())
+    # Ensure 'label' column exists and is correctly spelled
+    if 'label' in df_dataset.columns:
+        # Filter data based on labels
+        bullying_texts = ' '.join(df_dataset[df_dataset['label'] == 'bullying']['text'].astype(str).tolist())
+        non_bullying_texts = ' '.join(df_dataset[df_dataset['label'] == 'non bullying']['text'].astype(str).tolist())
 
-    # Dropdown to select category
-    category = st.selectbox('Pilih Kategori:', ['bullying', 'non bullying'])
+        # Dropdown to select category
+        category = st.selectbox('Pilih Kategori:', ['bullying', 'non bullying'])
 
-    if category == 'bullying':
-        # Generate and display WordCloud for bullying texts
-        st.subheader('WordCloud Kalimat Bullying')
-        wordcloud_bullying = generate_wordcloud(bullying_texts)
-        plt.figure(figsize=(10, 5))
-        plt.imshow(wordcloud_bullying, interpolation='bilinear')
-        plt.axis('off')
-        st.pyplot(plt)
+        if category == 'bullying':
+            # Generate and display WordCloud for bullying texts
+            st.subheader('WordCloud Kalimat Bullying')
+            wordcloud_bullying = generate_wordcloud(bullying_texts)
+            plt.figure(figsize=(10, 5))
+            plt.imshow(wordcloud_bullying, interpolation='bilinear')
+            plt.axis('off')
+            st.pyplot(plt)
 
-    elif category == 'non bullying':
-        # Generate and display WordCloud for non-bullying texts
-        st.subheader('WordCloud Kalimat Non-Bullying')
-        wordcloud_non_bullying = generate_wordcloud(non_bullying_texts)
-        plt.figure(figsize=(10, 5))
-        plt.imshow(wordcloud_non_bullying, interpolation='bilinear')
-        plt.axis('off')
-        st.pyplot(plt)
+        elif category == 'non bullying':
+            # Generate and display WordCloud for non-bullying texts
+            st.subheader('WordCloud Kalimat Non-Bullying')
+            wordcloud_non_bullying = generate_wordcloud(non_bullying_texts)
+            plt.figure(figsize=(10, 5))
+            plt.imshow(wordcloud_non_bullying, interpolation='bilinear')
+            plt.axis('off')
+            st.pyplot(plt)
+    else:
+        st.error("Kolom 'label' tidak ditemukan dalam dataset. Pastikan nama kolom sesuai dengan struktur dataset.")
 
 elif selected_tab == 'Ekstraksi N-gram':
     st.subheader('Ekstraksi N-gram')
