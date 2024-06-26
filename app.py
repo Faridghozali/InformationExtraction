@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
-
+    
 # Fungsi untuk memuat dataset
 def load_data(file_path):
     df = pd.read_csv(file_path)
@@ -63,27 +63,14 @@ elif selected_tab == 'Data dan Penjelasan':
     # Memuat dataset
     df_dataset = load_data('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
 
-    # Visualisasi jumlah label bullying dan non-bullying
-    st.subheader('Jumlah Label Bullying dan Non-Bullying')
-    label_counts = df_dataset['label'].value_counts()
-    st.write(label_counts)
+    # Menampilkan tabel dataset
+    st.dataframe(df_dataset)
 
-    # Visualisasi WordCloud untuk 'DATASET CYBERBULLYING INSTAGRAM - FINAL.csv'
-    st.subheader('WordCloud dari Dataset "DATASET CYBERBULLYING INSTAGRAM - FINAL"')
-    df_bullying = df_dataset[df_dataset['label'] == 'bullying']
-    text_bullying = ' '.join(df_bullying['text'])
-    wordcloud_bullying = WordCloud(width=800, height=400, background_color='white').generate(text_bullying)
-    plt.figure(figsize=(10, 5))
-    plt.imshow(wordcloud_bullying, interpolation='bilinear')
-    plt.axis('off')
-    st.pyplot(plt)
 
-    # Visualisasi WordCloud untuk 'DataPba.csv'
-    st.subheader('WordCloud dari Dataset "DataPba.csv"')
-    df_data_pba = load_data('DataPba.csv')
-    text_data_pba = ' '.join(df_data_pba['text'])
-    wordcloud_data_pba = WordCloud(width=800, height=400, background_color='white').generate(text_data_pba)
-    plt.figure(figsize=(10, 5))
-    plt.imshow(wordcloud_data_pba, interpolation='bilinear')
-    plt.axis('off')
-    st.pyplot(plt)
+
+    st.markdown("""
+    ### Data yang sudah di preprocessing
+    """)
+
+    df = load_data('DataPba.csv')
+    st.dataframe(df)
