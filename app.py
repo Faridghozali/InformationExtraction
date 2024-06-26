@@ -1,72 +1,74 @@
 import streamlit as st
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
-from wordcloud import WordCloud
+import numpy as np
 import matplotlib.pyplot as plt
-    
-# Fungsi untuk memuat dataset
-def load_data(file_path):
-    df = pd.read_csv(file_path)
-    return df
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.util import ngrams
+from collections import Counter
+import re
 
-# Fungsi untuk ekstraksi n-gram
-def extract_ngrams(texts, ngram_range=(1, 2)):
-    vectorizer = CountVectorizer(ngram_range=ngram_range, stop_words='english')
-    X = vectorizer.fit_transform(texts)
-    ngrams = vectorizer.get_feature_names_out()
-    counts = X.toarray().sum(axis=0)
-    df_ngrams = pd.DataFrame({'ngram': ngrams, 'count': counts})
-    df_ngrams = df_ngrams.sort_values(by='count', ascending=False)
-    return df_ngrams
+# Function to clean text
+def clean_text(text):
+    # Remove URLs
+    text = re.sub(r'http\S+', '', text)
+    # Remove punctuation and numbers
+    text = re.sub(r'[^\w\s]', '', text)
+    text = re.sub(r'\d+', '', text)
+    # Lowercase
+    text = text.lower()
+    return text
 
-# Judul aplikasi
-st.title('Ekstraksi Pola Ujaran Kebencian')
+# Function to tokenize and remove stopwords
+def preprocess_text(text):
+    stop_words = set(stopwords.words('english')) # Change to appropriate language
+    tokens = word_tokenize(text)
+    tokens = [token for token in tokens if token not in stop_words]
+    return tokens
 
-# Sidebar dengan tab tambahan
-with st.sidebar:
-    st.subheader('Menu')
-    selected_tab = st.radio('Pilih Tab:', ('Ekstraksi N-gram', 'Data dan Penjelasan'))
+# Function to extract n-grams
+def extract_ngrams(tokens, n):
+    n_grams = ngrams(tokens, n)
+    return [' '.join(grams) for grams in n_grams]
 
-# Konten utama berdasarkan tab yang dipilih
-if selected_tab == 'Ekstraksi N-gram':
-    # Input teks dari pengguna
-    user_input = st.text_area("Masukkan teks yang ingin dianalisis:", "")
+# Function to plot word cloud
+def plot_word_cloud(text_data):
+    # Generate word cloud or other visualizations
+    pass
 
-    if user_input:
-        # Pisahkan input menjadi kalimat-kalimat
-        texts = user_input.split('\n')
+# Main function for Streamlit app
+def main():
+    st.title('Hate Speech Pattern Extraction and Analysis')
 
-        # Ekstraksi n-gram
-        df_ngrams = extract_ngrams(texts)
+    # Sidebar for user input or file upload
+    st.sidebar.title('Upload or Input Text Data')
+    uploaded_file = st.sidebar.file_uploader("Upload a CSV file", type=["csv"])
 
-        # Tampilkan tabel n-gram dan frekuensinya
-        st.subheader('Frekuensi N-gram')
-        st.dataframe(df_ngrams)
+    if uploaded_file is not None:
+        df = pd.read_csv(uploaded_file)
+        st.dataframe(df.head())
 
-        # Visualisasi WordCloud
-        wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(df_ngrams.set_index('ngram').to_dict()['count'])
+        # Clean and preprocess text
+        df['clean_text'] = df['text_column'].apply(clean_text)
+        df['tokens'] = df['clean_text'].apply(preprocess_text)
 
-        st.subheader('WordCloud N-gram')
-        plt.figure(figsize=(10, 5))
-        plt.imshow(wordcloud, interpolation='bilinear')
-        plt.axis('off')
-        st.pyplot(plt)
+        # Extract n-grams
+        n = st.sidebar.number_input("Select n for n-grams", min_value=1, max_value=3, value=2)
+        df['ngrams'] = df['tokens'].apply(lambda x: extract_ngrams(x, n))
 
-elif selected_tab == 'Data dan Penjelasan':
-    st.subheader('Data dan Penjelasan')
-    st.markdown("""
-    Di tab ini, Anda dapat menampilkan semua data yang relevan dan penjelasan terkait analisis atau hasil dari ekstraksi pola ujaran kebencian.
-    
-    ### Tabel Dataset: DATASET CYBERBULLYING INSTAGRAM - FINAL
-    """)
+        # Analyze frequencies and patterns
+        st.subheader('Top n-grams')
+        all_ngrams = [ngram for ngrams_list in df['ngrams'] for ngram in ngrams_list]
+        ngram_counter = Counter(all_ngrams)
+        top_ngrams = ngram_counter.most_common(10)
+        st.write(top_ngrams)
 
-    # Memuat dataset
-    df_dataset = load_data('DATASET CYBERBULLYING INSTAGRAM - FINAL.csv')
-    
-    # Menampilkan tabel dataset
-    st.dataframe(df_dataset)
+        # Plot word cloud or other visualizations
+        st.subheader('Word Cloud')
+        plot_word_cloud(df['clean_text'])
 
-    st.markdown("""
-    ### Penjelasan Dataset
-    Anda dapat menambahkan penjelasan tambahan tentang dataset ini di sini.
-    """)
+    else:
+        st.sidebar.info('Upload a CSV file to start')
+
+if __name__ == '__main__':
+    main()
