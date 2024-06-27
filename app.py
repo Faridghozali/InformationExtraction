@@ -69,7 +69,7 @@ elif selected_tab == 'Ekstraksi informasi':
         # Visualisasi WordCloud
         wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(df_ngrams.set_index('ngram').to_dict()['count'])
 
-        st.subheader('WordCloud N-gram')
+        st.subheader('WordCloud')
         plt.figure(figsize=(10, 5))
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
