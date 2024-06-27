@@ -26,7 +26,7 @@ st.title('Ekstraksi Pola Ujaran Kebencian')
 with st.sidebar:
     st.subheader('Menu')
     # Urutan sidebar diubah disini
-    selected_tab = st.radio('Pilih Tab:', ('Data dan Penjelasan', 'Ekstraksi N-gram'))
+    selected_tab = st.radio('Pilih Tab:', ('Data dan Penjelasan', 'Ekstraksi informasi'))
 
 # Konten utama berdasarkan tab yang dipilih
 if selected_tab == 'Data dan Penjelasan':
