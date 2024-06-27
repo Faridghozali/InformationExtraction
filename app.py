@@ -50,7 +50,7 @@ if selected_tab == 'Data dan Penjelasan':
     df = load_data('DataPba.csv')
     st.dataframe(df)
 
-elif selected_tab == 'Ekstraksi N-gram':
+elif selected_tab == 'Ekstraksi informasi':
     st.subheader('Ekstraksi N-gram')
     # Input teks dari pengguna
     user_input = st.text_area("Masukkan teks yang ingin dianalisis:", "")
