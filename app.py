@@ -9,7 +9,7 @@ def load_data(file_path):
     df = pd.read_csv(file_path)
     return df
 
-# Fungsi untuk ekstraksi n-gram
+# Fungsi untuk ekstraksi 
 def extract_ngrams(texts, ngram_range=(1, 2)):
     vectorizer = CountVectorizer(ngram_range=ngram_range, stop_words='english')
     X = vectorizer.fit_transform(texts)
@@ -51,7 +51,7 @@ if selected_tab == 'Data dan Penjelasan':
     st.dataframe(df)
 
 elif selected_tab == 'Ekstraksi informasi':
-    st.subheader('Ekstraksi N-gram')
+    st.subheader('Ekstraksi ')
     # Input teks dari pengguna
     user_input = st.text_area("Masukkan teks yang ingin dianalisis:", "")
 
@@ -59,11 +59,11 @@ elif selected_tab == 'Ekstraksi informasi':
         # Pisahkan input menjadi kalimat-kalimat
         texts = user_input.split('\n')
 
-        # Ekstraksi n-gram
+        # Ekstraksi 
         df_ngrams = extract_ngrams(texts)
 
         # Tampilkan tabel n-gram dan frekuensinya
-        st.subheader('Frekuensi N-gram')
+        st.subheader('Frekuensi ')
         st.dataframe(df_ngrams)
 
         # Visualisasi WordCloud
